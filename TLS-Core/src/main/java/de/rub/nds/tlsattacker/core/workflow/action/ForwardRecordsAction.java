@@ -1,18 +1,18 @@
 /**
  * TLS-Attacker - A Modular Penetration Testing Framework for TLS
  *
- * Copyright 2014-2020 Ruhr University Bochum, Paderborn University,
- * and Hackmanit GmbH
+ * Copyright 2014-2021 Ruhr University Bochum, Paderborn University, Hackmanit GmbH
  *
- * Licensed under Apache License 2.0
- * http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under Apache License, Version 2.0
+ * http://www.apache.org/licenses/LICENSE-2.0.txt
  */
+
 package de.rub.nds.tlsattacker.core.workflow.action;
 
 import de.rub.nds.modifiablevariable.HoldsModifiableVariable;
 import de.rub.nds.tlsattacker.core.exceptions.ConfigurationException;
 import de.rub.nds.tlsattacker.core.exceptions.WorkflowExecutionException;
-import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
+import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.record.AbstractRecord;
 import de.rub.nds.tlsattacker.core.record.BlobRecord;
 import de.rub.nds.tlsattacker.core.record.Record;
@@ -28,10 +28,12 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlElements;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+@XmlRootElement
 public class ForwardRecordsAction extends TlsAction implements ReceivingAction, SendingAction {
 
     private static final Logger LOGGER = LogManager.getLogger();
@@ -47,15 +49,19 @@ public class ForwardRecordsAction extends TlsAction implements ReceivingAction, 
     @HoldsModifiableVariable
     @XmlElementWrapper
     @XmlElements(value = { @XmlElement(type = Record.class, name = "Record"),
-            @XmlElement(type = BlobRecord.class, name = "BlobRecord") })
+        @XmlElement(type = BlobRecord.class, name = "BlobRecord") })
     protected List<AbstractRecord> receivedRecords;
 
     @HoldsModifiableVariable
     @XmlElementWrapper
     @XmlElements(value = { @XmlElement(type = Record.class, name = "Record"),
-            @XmlElement(type = BlobRecord.class, name = "BlobRecord") })
+        @XmlElement(type = BlobRecord.class, name = "BlobRecord") })
     protected List<AbstractRecord> sendRecords;
+
+    @XmlTransient
     private ReceiveMessageHelper receiveMessageHelper;
+
+    @XmlTransient
     private SendMessageHelper sendMessageHelper;
 
     public ForwardRecordsAction() {
@@ -71,7 +77,7 @@ public class ForwardRecordsAction extends TlsAction implements ReceivingAction, 
      * Allow to pass a fake ReceiveMessageHelper helper for testing.
      */
     protected ForwardRecordsAction(String receiveFromAlias, String forwardToAlias,
-            ReceiveMessageHelper receiveMessageHelper) {
+        ReceiveMessageHelper receiveMessageHelper) {
         this.receiveFromAlias = receiveFromAlias;
         this.forwardToAlias = forwardToAlias;
         this.receiveMessageHelper = receiveMessageHelper;
@@ -113,8 +119,8 @@ public class ForwardRecordsAction extends TlsAction implements ReceivingAction, 
         try {
             sendMessageHelper.sendRecords(receivedRecords, forwardToCtx);
             setExecuted(true);
-        } catch (IOException E) {
-            LOGGER.debug(E);
+        } catch (IOException e) {
+            LOGGER.debug(e);
             executedAsPlanned = false;
             setExecuted(false);
         }
@@ -201,11 +207,11 @@ public class ForwardRecordsAction extends TlsAction implements ReceivingAction, 
     public void assertAliasesSetProperly() throws ConfigurationException {
         if ((receiveFromAlias == null) || (receiveFromAlias.isEmpty())) {
             throw new WorkflowExecutionException("Can't execute " + this.getClass().getSimpleName()
-                    + " with empty receive alias (if using XML: add <from/>)");
+                + " with empty receive alias (if using XML: add <from/>)");
         }
         if ((forwardToAlias == null) || (forwardToAlias.isEmpty())) {
             throw new WorkflowExecutionException("Can't execute " + this.getClass().getSimpleName()
-                    + " with empty forward alis (if using XML: add <to/>)");
+                + " with empty forward alis (if using XML: add <to/>)");
         }
     }
 

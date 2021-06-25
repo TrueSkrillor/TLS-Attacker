@@ -1,15 +1,16 @@
 /**
  * TLS-Attacker - A Modular Penetration Testing Framework for TLS
  *
- * Copyright 2014-2020 Ruhr University Bochum, Paderborn University,
- * and Hackmanit GmbH
+ * Copyright 2014-2021 Ruhr University Bochum, Paderborn University, Hackmanit GmbH
  *
- * Licensed under Apache License 2.0
- * http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under Apache License, Version 2.0
+ * http://www.apache.org/licenses/LICENSE-2.0.txt
  */
+
 package de.rub.nds.tlsattacker.core.protocol.handler.extension;
 
 import de.rub.nds.modifiablevariable.util.ArrayConverter;
+import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.protocol.message.extension.ExtendedRandomExtensionMessage;
 import de.rub.nds.tlsattacker.core.protocol.parser.extension.ExtendedRandomExtensionParser;
 import de.rub.nds.tlsattacker.core.protocol.preparator.extension.ExtendedRandomExtensionPreparator;
@@ -32,8 +33,8 @@ public class ExtendedRandomExtensionHandler extends ExtensionHandler<ExtendedRan
     }
 
     @Override
-    public ExtendedRandomExtensionParser getParser(byte[] message, int pointer) {
-        return new ExtendedRandomExtensionParser(pointer, message);
+    public ExtendedRandomExtensionParser getParser(byte[] message, int pointer, Config config) {
+        return new ExtendedRandomExtensionParser(pointer, message, config);
     }
 
     @Override
@@ -51,13 +52,13 @@ public class ExtendedRandomExtensionHandler extends ExtensionHandler<ExtendedRan
         if (context.getTalkingConnectionEndType().equals(ConnectionEndType.SERVER)) {
             context.setServerExtendedRandom(message.getExtendedRandom().getValue());
             LOGGER.debug("The context server extended Random was set to "
-                    + ArrayConverter.bytesToHexString(message.getExtendedRandom()));
+                + ArrayConverter.bytesToHexString(message.getExtendedRandom()));
 
         }
         if (context.getTalkingConnectionEndType().equals(ConnectionEndType.CLIENT)) {
             context.setClientExtendedRandom(message.getExtendedRandom().getValue());
             LOGGER.debug("The context client extended Random was set to "
-                    + ArrayConverter.bytesToHexString(message.getExtendedRandom()));
+                + ArrayConverter.bytesToHexString(message.getExtendedRandom()));
 
         }
 
@@ -66,10 +67,10 @@ public class ExtendedRandomExtensionHandler extends ExtensionHandler<ExtendedRan
         // then extend the client and server random for premaster computations.
         if (!(context.getClientExtendedRandom() == null) && !(context.getServerExtendedRandom() == null)) {
             LOGGER.debug("Extended Random was agreed on. Concatenating extended Randoms to normal Randoms.");
-            byte[] clientConcatRandom = ArrayConverter.concatenate(context.getClientRandom(),
-                    context.getClientExtendedRandom());
-            byte[] serverConcatRandom = ArrayConverter.concatenate(context.getServerRandom(),
-                    context.getServerExtendedRandom());
+            byte[] clientConcatRandom =
+                ArrayConverter.concatenate(context.getClientRandom(), context.getClientExtendedRandom());
+            byte[] serverConcatRandom =
+                ArrayConverter.concatenate(context.getServerRandom(), context.getServerExtendedRandom());
             context.setClientRandom(clientConcatRandom);
             LOGGER.debug("ClientRandom: " + ArrayConverter.bytesToHexString(context.getClientRandom()));
             context.setServerRandom(serverConcatRandom);

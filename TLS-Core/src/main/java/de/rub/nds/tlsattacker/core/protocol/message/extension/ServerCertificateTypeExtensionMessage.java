@@ -1,12 +1,12 @@
 /**
  * TLS-Attacker - A Modular Penetration Testing Framework for TLS
  *
- * Copyright 2014-2020 Ruhr University Bochum, Paderborn University,
- * and Hackmanit GmbH
+ * Copyright 2014-2021 Ruhr University Bochum, Paderborn University, Hackmanit GmbH
  *
- * Licensed under Apache License 2.0
- * http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under Apache License, Version 2.0
+ * http://www.apache.org/licenses/LICENSE-2.0.txt
  */
+
 package de.rub.nds.tlsattacker.core.protocol.message.extension;
 
 import de.rub.nds.modifiablevariable.ModifiableVariableFactory;
@@ -14,6 +14,7 @@ import de.rub.nds.modifiablevariable.ModifiableVariableProperty;
 import de.rub.nds.modifiablevariable.bool.ModifiableBoolean;
 import de.rub.nds.modifiablevariable.bytearray.ModifiableByteArray;
 import de.rub.nds.modifiablevariable.integer.ModifiableInteger;
+import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.constants.ExtensionType;
 
 /**
@@ -32,6 +33,10 @@ public class ServerCertificateTypeExtensionMessage extends ExtensionMessage {
         super(ExtensionType.SERVER_CERTIFICATE_TYPE);
     }
 
+    public ServerCertificateTypeExtensionMessage(Config config) {
+        super(ExtensionType.SERVER_CERTIFICATE_TYPE);
+    }
+
     public ModifiableInteger getCertificateTypesLength() {
         return certificateTypesLength;
     }
@@ -41,8 +46,8 @@ public class ServerCertificateTypeExtensionMessage extends ExtensionMessage {
     }
 
     public void setCertificateTypesLength(int certificateTypesLength) {
-        this.certificateTypesLength = ModifiableVariableFactory.safelySetValue(this.certificateTypesLength,
-                certificateTypesLength);
+        this.certificateTypesLength =
+            ModifiableVariableFactory.safelySetValue(this.certificateTypesLength, certificateTypesLength);
     }
 
     public ModifiableByteArray getCertificateTypes() {

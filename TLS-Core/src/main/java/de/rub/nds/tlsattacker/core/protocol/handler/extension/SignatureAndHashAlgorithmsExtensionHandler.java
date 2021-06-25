@@ -1,15 +1,16 @@
 /**
  * TLS-Attacker - A Modular Penetration Testing Framework for TLS
  *
- * Copyright 2014-2020 Ruhr University Bochum, Paderborn University,
- * and Hackmanit GmbH
+ * Copyright 2014-2021 Ruhr University Bochum, Paderborn University, Hackmanit GmbH
  *
- * Licensed under Apache License 2.0
- * http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under Apache License, Version 2.0
+ * http://www.apache.org/licenses/LICENSE-2.0.txt
  */
+
 package de.rub.nds.tlsattacker.core.protocol.handler.extension;
 
 import de.rub.nds.modifiablevariable.util.ArrayConverter;
+import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.constants.HandshakeByteLength;
 import de.rub.nds.tlsattacker.core.constants.SignatureAndHashAlgorithm;
 import de.rub.nds.tlsattacker.core.exceptions.AdjustmentException;
@@ -24,8 +25,8 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class SignatureAndHashAlgorithmsExtensionHandler extends
-        ExtensionHandler<SignatureAndHashAlgorithmsExtensionMessage> {
+public class SignatureAndHashAlgorithmsExtensionHandler
+    extends ExtensionHandler<SignatureAndHashAlgorithmsExtensionMessage> {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -39,11 +40,11 @@ public class SignatureAndHashAlgorithmsExtensionHandler extends
         byte[] signatureAndHashBytes = message.getSignatureAndHashAlgorithms().getValue();
         if (signatureAndHashBytes.length % HandshakeByteLength.SIGNATURE_HASH_ALGORITHM != 0) {
             throw new AdjustmentException(
-                    "Cannot adjust ClientSupportedSignature and Hash algorithms to a resonable Value");
+                "Cannot adjust ClientSupportedSignature and Hash algorithms to a reasonable Value");
         }
         for (int i = 0; i < signatureAndHashBytes.length; i += HandshakeByteLength.SIGNATURE_HASH_ALGORITHM) {
-            byte[] algoBytes = Arrays.copyOfRange(signatureAndHashBytes, i, i
-                    + HandshakeByteLength.SIGNATURE_HASH_ALGORITHM);
+            byte[] algoBytes =
+                Arrays.copyOfRange(signatureAndHashBytes, i, i + HandshakeByteLength.SIGNATURE_HASH_ALGORITHM);
             SignatureAndHashAlgorithm algo = SignatureAndHashAlgorithm.getSignatureAndHashAlgorithm(algoBytes);
             if (algo == null || algo.getSignatureAlgorithm() == null || algo.getHashAlgorithm() == null) {
                 LOGGER.warn("Unknown SignatureAndHashAlgorithm:" + ArrayConverter.bytesToHexString(algoBytes));
@@ -55,19 +56,19 @@ public class SignatureAndHashAlgorithmsExtensionHandler extends
     }
 
     @Override
-    public SignatureAndHashAlgorithmsExtensionParser getParser(byte[] message, int pointer) {
-        return new SignatureAndHashAlgorithmsExtensionParser(pointer, message);
+    public SignatureAndHashAlgorithmsExtensionParser getParser(byte[] message, int pointer, Config config) {
+        return new SignatureAndHashAlgorithmsExtensionParser(pointer, message, config);
     }
 
     @Override
-    public SignatureAndHashAlgorithmsExtensionPreparator getPreparator(
-            SignatureAndHashAlgorithmsExtensionMessage message) {
+    public SignatureAndHashAlgorithmsExtensionPreparator
+        getPreparator(SignatureAndHashAlgorithmsExtensionMessage message) {
         return new SignatureAndHashAlgorithmsExtensionPreparator(context.getChooser(), message, getSerializer(message));
     }
 
     @Override
-    public SignatureAndHashAlgorithmsExtensionSerializer getSerializer(
-            SignatureAndHashAlgorithmsExtensionMessage message) {
+    public SignatureAndHashAlgorithmsExtensionSerializer
+        getSerializer(SignatureAndHashAlgorithmsExtensionMessage message) {
         return new SignatureAndHashAlgorithmsExtensionSerializer(message);
     }
 

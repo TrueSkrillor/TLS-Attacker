@@ -1,17 +1,15 @@
 /**
  * TLS-Attacker - A Modular Penetration Testing Framework for TLS
  *
- * Copyright 2014-2020 Ruhr University Bochum, Paderborn University,
- * and Hackmanit GmbH
+ * Copyright 2014-2021 Ruhr University Bochum, Paderborn University, Hackmanit GmbH
  *
- * Licensed under Apache License 2.0
- * http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under Apache License, Version 2.0
+ * http://www.apache.org/licenses/LICENSE-2.0.txt
  */
+
 package de.rub.nds.tlsattacker.core.protocol.handler.extension;
 
 import de.rub.nds.modifiablevariable.util.ArrayConverter;
-import de.rub.nds.tlsattacker.core.connection.InboundConnection;
-import de.rub.nds.tlsattacker.core.connection.OutboundConnection;
 import de.rub.nds.tlsattacker.core.protocol.message.extension.ExtendedRandomExtensionMessage;
 import de.rub.nds.tlsattacker.core.protocol.parser.extension.ExtendedRandomExtensionParser;
 import de.rub.nds.tlsattacker.core.protocol.preparator.extension.ExtendedRandomExtensionPreparator;
@@ -26,11 +24,11 @@ import static org.junit.Assert.*;
 
 public class ExtendedRandomExtensionHandlerTest {
     private final byte[] EXTENDED_RANDOM_SHORT = new byte[0];
-    private final byte[] EXTENDED_RANDOM_DEFAULT = ArrayConverter
-            .hexStringToByteArray("AABBCCDDEEFFAABBCCDDEEFFAABBCCDDEEFFAABBCCDDEEFFAABBCCDDEEFFAABB");
-    private final byte[] EXTENDED_RANDOM_LONG = ArrayConverter
-            .hexStringToByteArray("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-                    + "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+    private final byte[] EXTENDED_RANDOM_DEFAULT =
+        ArrayConverter.hexStringToByteArray("AABBCCDDEEFFAABBCCDDEEFFAABBCCDDEEFFAABBCCDDEEFFAABBCCDDEEFFAABB");
+    private final byte[] EXTENDED_RANDOM_LONG =
+        ArrayConverter.hexStringToByteArray("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+            + "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
     private final byte[] EXTENDED_RANDOM_CLIENT = ArrayConverter.hexStringToByteArray("AABBCCDDEEFF");
     private final byte[] EXTENDED_RANDOM_SERVER = ArrayConverter.hexStringToByteArray("112233445566");
 
@@ -124,17 +122,19 @@ public class ExtendedRandomExtensionHandlerTest {
 
     @Test
     public void testGetParser() {
-        assertTrue(handler.getParser(new byte[0], 0) instanceof ExtendedRandomExtensionParser);
+        assertTrue(handler.getParser(new byte[0], 0, context.getConfig()) instanceof ExtendedRandomExtensionParser);
     }
 
     @Test
     public void testGetPreparator() {
-        assertTrue(handler.getPreparator(new ExtendedRandomExtensionMessage()) instanceof ExtendedRandomExtensionPreparator);
+        assertTrue(
+            handler.getPreparator(new ExtendedRandomExtensionMessage()) instanceof ExtendedRandomExtensionPreparator);
     }
 
     @Test
     public void testGetSerializer() {
-        assertTrue(handler.getSerializer(new ExtendedRandomExtensionMessage()) instanceof ExtendedRandomExtensionSerializer);
+        assertTrue(
+            handler.getSerializer(new ExtendedRandomExtensionMessage()) instanceof ExtendedRandomExtensionSerializer);
     }
 
 }

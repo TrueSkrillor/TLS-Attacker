@@ -1,14 +1,15 @@
 /**
  * TLS-Attacker - A Modular Penetration Testing Framework for TLS
  *
- * Copyright 2014-2020 Ruhr University Bochum, Paderborn University,
- * and Hackmanit GmbH
+ * Copyright 2014-2021 Ruhr University Bochum, Paderborn University, Hackmanit GmbH
  *
- * Licensed under Apache License 2.0
- * http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under Apache License, Version 2.0
+ * http://www.apache.org/licenses/LICENSE-2.0.txt
  */
+
 package de.rub.nds.tlsattacker.core.protocol.handler.extension;
 
+import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.constants.TokenBindingKeyParameters;
 import de.rub.nds.tlsattacker.core.constants.TokenBindingVersion;
 import de.rub.nds.tlsattacker.core.protocol.message.extension.TokenBindingExtensionMessage;
@@ -25,8 +26,8 @@ public class TokenBindingExtensionHandler extends ExtensionHandler<TokenBindingE
     }
 
     @Override
-    public TokenBindingExtensionParser getParser(byte[] message, int pointer) {
-        return new TokenBindingExtensionParser(pointer, message);
+    public TokenBindingExtensionParser getParser(byte[] message, int pointer, Config config) {
+        return new TokenBindingExtensionParser(pointer, message, config);
     }
 
     @Override
@@ -41,8 +42,8 @@ public class TokenBindingExtensionHandler extends ExtensionHandler<TokenBindingE
 
     @Override
     public void adjustTLSExtensionContext(TokenBindingExtensionMessage message) {
-        context.setTokenBindingVersion(TokenBindingVersion
-                .getExtensionType(message.getTokenbindingVersion().getValue()));
+        context
+            .setTokenBindingVersion(TokenBindingVersion.getExtensionType(message.getTokenbindingVersion().getValue()));
         ArrayList<TokenBindingKeyParameters> tokenbindingKeyParameters = new ArrayList<>();
         for (byte kp : message.getTokenbindingKeyParameters().getValue()) {
             tokenbindingKeyParameters.add(TokenBindingKeyParameters.getTokenBindingKeyParameter(kp));
@@ -52,5 +53,4 @@ public class TokenBindingExtensionHandler extends ExtensionHandler<TokenBindingE
             context.setTokenBindingNegotiatedSuccessfully(true);
         }
     }
-
 }

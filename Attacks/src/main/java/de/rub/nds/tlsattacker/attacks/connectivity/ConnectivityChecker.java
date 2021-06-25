@@ -1,17 +1,18 @@
 /**
  * TLS-Attacker - A Modular Penetration Testing Framework for TLS
  *
- * Copyright 2014-2020 Ruhr University Bochum, Paderborn University,
- * and Hackmanit GmbH
+ * Copyright 2014-2021 Ruhr University Bochum, Paderborn University, Hackmanit GmbH
  *
- * Licensed under Apache License 2.0
- * http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under Apache License, Version 2.0
+ * http://www.apache.org/licenses/LICENSE-2.0.txt
  */
+
 package de.rub.nds.tlsattacker.attacks.connectivity;
 
 import de.rub.nds.tlsattacker.core.config.Config;
+import de.rub.nds.tlsattacker.core.connection.AliasedConnection;
 import de.rub.nds.tlsattacker.core.constants.RunningModeType;
-import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
+import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.SSL2ServerHelloMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ServerHelloDoneMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.ServerHelloMessage;
@@ -32,7 +33,6 @@ import de.rub.nds.tlsattacker.transport.TransportHandler;
 import de.rub.nds.tlsattacker.transport.TransportHandlerFactory;
 import de.rub.nds.tlsattacker.transport.TransportHandlerType;
 import java.io.IOException;
-import java.util.Objects;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -51,6 +51,9 @@ public class ConnectivityChecker {
      */
     public ConnectivityChecker(Connection connection) {
         this.connection = connection;
+        if (connection instanceof AliasedConnection) {
+            ((AliasedConnection) connection).normalize((AliasedConnection) connection);
+        }
     }
 
     /**
@@ -98,7 +101,7 @@ public class ConnectivityChecker {
             } else {
                 for (ProtocolMessage message : receiveTillAction.getReceivedMessages()) {
                     if (message instanceof ServerHelloMessage || message instanceof ServerHelloDoneMessage
-                            || message instanceof SSL2ServerHelloMessage) {
+                        || message instanceof SSL2ServerHelloMessage) {
                         return true;
                     }
                 }
@@ -111,16 +114,16 @@ public class ConnectivityChecker {
 
     public boolean speaksStartTls(Config config) {
         WorkflowConfigurationFactory factory = new WorkflowConfigurationFactory(config);
-        WorkflowTrace trace = factory.createTlsEntryWorkflowtrace(config.getDefaultClientConnection());
+        WorkflowTrace trace = factory.createTlsEntryWorkflowTrace(config.getDefaultClientConnection());
         State state = new State(config, trace);
         WorkflowExecutor executor = WorkflowExecutorFactory.createWorkflowExecutor(WorkflowExecutorType.DEFAULT, state);
         executor.executeWorkflow();
         if (trace.allActionsExecuted()) {
             for (TlsAction action : trace.getTlsActions()) {
-                if (action instanceof AsciiAction || !(action instanceof SendAsciiAction)) {
+                if (action instanceof AsciiAction && !(action instanceof SendAsciiAction)) {
                     AsciiAction asciiAction = (AsciiAction) action;
                     if (asciiAction.getAsciiText() != null) {
-                        if (asciiAction.getAsciiText().toLowerCase().contains("TLS negotiation".toLowerCase())) {
+                        if (asciiAction.getAsciiText().contains(config.getStarttlsType().getNegotiatationString())) {
                             return true;
                         }
                     }

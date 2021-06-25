@@ -1,14 +1,15 @@
 /**
  * TLS-Attacker - A Modular Penetration Testing Framework for TLS
  *
- * Copyright 2014-2020 Ruhr University Bochum, Paderborn University,
- * and Hackmanit GmbH
+ * Copyright 2014-2021 Ruhr University Bochum, Paderborn University, Hackmanit GmbH
  *
- * Licensed under Apache License 2.0
- * http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under Apache License, Version 2.0
+ * http://www.apache.org/licenses/LICENSE-2.0.txt
  */
+
 package de.rub.nds.tlsattacker.core.protocol.handler.extension;
 
+import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.constants.UserMappingExtensionHintType;
 import de.rub.nds.tlsattacker.core.protocol.message.UserMappingExtensionMessage;
 import de.rub.nds.tlsattacker.core.protocol.parser.extension.UserMappingExtensionParser;
@@ -27,8 +28,8 @@ public class UserMappingExtensionHandler extends ExtensionHandler<UserMappingExt
     }
 
     @Override
-    public UserMappingExtensionParser getParser(byte[] message, int pointer) {
-        return new UserMappingExtensionParser(pointer, message);
+    public UserMappingExtensionParser getParser(byte[] message, int pointer, Config config) {
+        return new UserMappingExtensionParser(pointer, message, config);
     }
 
     @Override
@@ -43,10 +44,10 @@ public class UserMappingExtensionHandler extends ExtensionHandler<UserMappingExt
 
     @Override
     public void adjustTLSExtensionContext(UserMappingExtensionMessage message) {
-        context.setUserMappingExtensionHintType(UserMappingExtensionHintType.getExtensionType(message
-                .getUserMappingType().getValue()));
+        context.setUserMappingExtensionHintType(
+            UserMappingExtensionHintType.getExtensionType(message.getUserMappingType().getValue()));
         LOGGER.debug("Adjusted the TLS context user mapping extension hint type to "
-                + context.getUserMappingExtensionHintType().getValue());
+            + context.getUserMappingExtensionHintType().getValue());
     }
 
 }

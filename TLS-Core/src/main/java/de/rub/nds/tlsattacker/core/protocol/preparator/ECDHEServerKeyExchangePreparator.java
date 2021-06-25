@@ -1,12 +1,12 @@
 /**
  * TLS-Attacker - A Modular Penetration Testing Framework for TLS
  *
- * Copyright 2014-2020 Ruhr University Bochum, Paderborn University,
- * and Hackmanit GmbH
+ * Copyright 2014-2021 Ruhr University Bochum, Paderborn University, Hackmanit GmbH
  *
- * Licensed under Apache License 2.0
- * http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under Apache License, Version 2.0
+ * http://www.apache.org/licenses/LICENSE-2.0.txt
  */
+
 package de.rub.nds.tlsattacker.core.protocol.preparator;
 
 import de.rub.nds.modifiablevariable.util.ArrayConverter;
@@ -17,10 +17,9 @@ import de.rub.nds.tlsattacker.core.constants.SignatureAndHashAlgorithm;
 import de.rub.nds.tlsattacker.core.crypto.SignatureCalculator;
 import de.rub.nds.tlsattacker.core.crypto.ec.CurveFactory;
 import de.rub.nds.tlsattacker.core.crypto.ec.EllipticCurve;
-import de.rub.nds.tlsattacker.core.crypto.ec.ForgivingX25519Curve;
-import de.rub.nds.tlsattacker.core.crypto.ec.ForgivingX448Curve;
 import de.rub.nds.tlsattacker.core.crypto.ec.Point;
 import de.rub.nds.tlsattacker.core.crypto.ec.PointFormatter;
+import de.rub.nds.tlsattacker.core.crypto.ec.RFC7748Curve;
 import de.rub.nds.tlsattacker.core.exceptions.CryptoException;
 import de.rub.nds.tlsattacker.core.exceptions.PreparationException;
 import de.rub.nds.tlsattacker.core.protocol.message.ECDHEServerKeyExchangeMessage;
@@ -32,8 +31,8 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class ECDHEServerKeyExchangePreparator<T extends ECDHEServerKeyExchangeMessage> extends
-        ServerKeyExchangePreparator<T> {
+public class ECDHEServerKeyExchangePreparator<T extends ECDHEServerKeyExchangeMessage>
+    extends ServerKeyExchangePreparator<T> {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -58,8 +57,8 @@ public class ECDHEServerKeyExchangePreparator<T extends ECDHEServerKeyExchangeMe
         byte[] signature = new byte[0];
         try {
             signature = generateSignature(msg, signHashAlgo);
-        } catch (CryptoException E) {
-            LOGGER.warn("Could not generate Signature! Using empty one instead!", E);
+        } catch (CryptoException e) {
+            LOGGER.warn("Could not generate Signature! Using empty one instead!", e);
         }
         prepareSignature(msg, signature);
         prepareSignatureLength(msg);
@@ -85,15 +84,18 @@ public class ECDHEServerKeyExchangePreparator<T extends ECDHEServerKeyExchangeMe
         }
 
         // Compute publicKey
+        EllipticCurve curve = CurveFactory.getCurve(namedGroup);
         byte[] publicKeyBytes = null;
-        if (namedGroup == NamedGroup.ECDH_X25519) {
-            publicKeyBytes = ForgivingX25519Curve.computePublicKey(msg.getComputations().getPrivateKey().getValue());
-        } else if (namedGroup == NamedGroup.ECDH_X448) {
-            publicKeyBytes = ForgivingX448Curve.computePublicKey(msg.getComputations().getPrivateKey().getValue());
+        if (namedGroup == NamedGroup.ECDH_X25519 || namedGroup == NamedGroup.ECDH_X448) {
+            RFC7748Curve rfcCurve = (RFC7748Curve) curve;
+            publicKeyBytes = rfcCurve.computePublicKey(msg.getComputations().getPrivateKey().getValue());
         } else if (namedGroup.isCurve()) {
-            EllipticCurve curve = CurveFactory.getCurve(namedGroup);
             Point publicKey = curve.mult(msg.getComputations().getPrivateKey().getValue(), curve.getBasePoint());
             publicKeyBytes = PointFormatter.formatToByteArray(namedGroup, publicKey, pointFormat);
+        } else {
+            LOGGER.warn(
+                "Could not set public key. The selected curve is probably not a real curve. Using empty public key instead");
+            publicKeyBytes = new byte[0];
         }
         msg.setPublicKey(publicKeyBytes);
         msg.setPublicKeyLength(msg.getPublicKey().getValue().length);
@@ -156,19 +158,24 @@ public class ECDHEServerKeyExchangePreparator<T extends ECDHEServerKeyExchangeMe
                 try {
                     ecParams.write(msg.getNamedGroup().getValue());
                 } catch (IOException ex) {
-                    throw new PreparationException("Failed to add named group to ECDHEServerKeyExchange signature.", ex);
+                    throw new PreparationException("Failed to add named group to ECDHEServerKeyExchange signature.",
+                        ex);
                 }
+                break;
+            default:
+                throw new UnsupportedOperationException("Unsupported curve type");
         }
 
         ecParams.write(msg.getPublicKeyLength().getValue());
         try {
             ecParams.write(msg.getPublicKey().getValue());
         } catch (IOException ex) {
-            throw new PreparationException("Failed to add serializedPublicKey to ECDHEServerKeyExchange signature.", ex);
+            throw new PreparationException("Failed to add serializedPublicKey to ECDHEServerKeyExchange signature.",
+                ex);
         }
 
         return ArrayConverter.concatenate(msg.getComputations().getClientServerRandom().getValue(),
-                ecParams.toByteArray());
+            ecParams.toByteArray());
 
     }
 
@@ -179,14 +186,14 @@ public class ECDHEServerKeyExchangePreparator<T extends ECDHEServerKeyExchangeMe
     protected void prepareSignatureAndHashAlgorithm(T msg, SignatureAndHashAlgorithm signHashAlgo) {
         msg.setSignatureAndHashAlgorithm(signHashAlgo.getByteValue());
         LOGGER.debug("SignatureAndHashAlgorithm: "
-                + ArrayConverter.bytesToHexString(msg.getSignatureAndHashAlgorithm().getValue()));
+            + ArrayConverter.bytesToHexString(msg.getSignatureAndHashAlgorithm().getValue()));
     }
 
     protected void prepareClientServerRandom(T msg) {
-        msg.getComputations().setClientServerRandom(
-                ArrayConverter.concatenate(chooser.getClientRandom(), chooser.getServerRandom()));
+        msg.getComputations()
+            .setClientServerRandom(ArrayConverter.concatenate(chooser.getClientRandom(), chooser.getServerRandom()));
         LOGGER.debug("ClientServerRandom: "
-                + ArrayConverter.bytesToHexString(msg.getComputations().getClientServerRandom().getValue()));
+            + ArrayConverter.bytesToHexString(msg.getComputations().getClientServerRandom().getValue()));
     }
 
     protected void prepareSignature(T msg, byte[] signature) {

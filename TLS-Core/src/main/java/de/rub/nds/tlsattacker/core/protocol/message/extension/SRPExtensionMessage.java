@@ -1,18 +1,19 @@
 /**
  * TLS-Attacker - A Modular Penetration Testing Framework for TLS
  *
- * Copyright 2014-2020 Ruhr University Bochum, Paderborn University,
- * and Hackmanit GmbH
+ * Copyright 2014-2021 Ruhr University Bochum, Paderborn University, Hackmanit GmbH
  *
- * Licensed under Apache License 2.0
- * http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under Apache License, Version 2.0
+ * http://www.apache.org/licenses/LICENSE-2.0.txt
  */
+
 package de.rub.nds.tlsattacker.core.protocol.message.extension;
 
 import de.rub.nds.modifiablevariable.ModifiableVariableFactory;
 import de.rub.nds.modifiablevariable.ModifiableVariableProperty;
 import de.rub.nds.modifiablevariable.bytearray.ModifiableByteArray;
 import de.rub.nds.modifiablevariable.integer.ModifiableInteger;
+import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.constants.ExtensionType;
 
 /**
@@ -20,7 +21,7 @@ import de.rub.nds.tlsattacker.core.constants.ExtensionType;
  */
 public class SRPExtensionMessage extends ExtensionMessage {
 
-    // UTF-8 encoed and according to RFC 4013 with the SASLprep profile
+    // UTF-8 encoded and according to RFC 4013 with the SASLprep profile
     @ModifiableVariableProperty
     private ModifiableByteArray srpIdentifier;
 
@@ -28,6 +29,10 @@ public class SRPExtensionMessage extends ExtensionMessage {
     private ModifiableInteger srpIdentifierLength;
 
     public SRPExtensionMessage() {
+        super(ExtensionType.SRP);
+    }
+
+    public SRPExtensionMessage(Config config) {
         super(ExtensionType.SRP);
     }
 
@@ -52,8 +57,8 @@ public class SRPExtensionMessage extends ExtensionMessage {
     }
 
     public void setSrpIdentifierLength(int srpIdentifierLength) {
-        this.srpIdentifierLength = ModifiableVariableFactory.safelySetValue(this.srpIdentifierLength,
-                srpIdentifierLength);
+        this.srpIdentifierLength =
+            ModifiableVariableFactory.safelySetValue(this.srpIdentifierLength, srpIdentifierLength);
     }
 
 }

@@ -1,14 +1,15 @@
 /**
  * TLS-Attacker - A Modular Penetration Testing Framework for TLS
  *
- * Copyright 2014-2020 Ruhr University Bochum, Paderborn University,
- * and Hackmanit GmbH
+ * Copyright 2014-2021 Ruhr University Bochum, Paderborn University, Hackmanit GmbH
  *
- * Licensed under Apache License 2.0
- * http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under Apache License, Version 2.0
+ * http://www.apache.org/licenses/LICENSE-2.0.txt
  */
+
 package de.rub.nds.tlsattacker.core.protocol.handler.extension;
 
+import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.constants.CertificateType;
 import de.rub.nds.tlsattacker.core.protocol.message.extension.ServerCertificateTypeExtensionMessage;
 import de.rub.nds.tlsattacker.core.protocol.parser.extension.ServerCertificateTypeExtensionParser;
@@ -28,8 +29,8 @@ public class ServerCertificateTypeExtensionHandler extends ExtensionHandler<Serv
     }
 
     @Override
-    public ServerCertificateTypeExtensionParser getParser(byte[] message, int pointer) {
-        return new ServerCertificateTypeExtensionParser(pointer, message);
+    public ServerCertificateTypeExtensionParser getParser(byte[] message, int pointer, Config config) {
+        return new ServerCertificateTypeExtensionParser(pointer, message, config);
     }
 
     @Override
@@ -48,12 +49,12 @@ public class ServerCertificateTypeExtensionHandler extends ExtensionHandler<Serv
             if (message.getCertificateTypes().getValue().length != 1) {
                 LOGGER.warn("Invalid ServerCertificateType extension. Not adjusting context");
             } else {
-                context.setSelectedServerCertificateType(CertificateType.getCertificateType(message
-                        .getCertificateTypes().getValue()[0]));
+                context.setSelectedServerCertificateType(
+                    CertificateType.getCertificateType(message.getCertificateTypes().getValue()[0]));
             }
         } else {
-            context.setServerCertificateTypeDesiredTypes(CertificateType.getCertificateTypesAsList(message
-                    .getCertificateTypes().getValue()));
+            context.setServerCertificateTypeDesiredTypes(
+                CertificateType.getCertificateTypesAsList(message.getCertificateTypes().getValue()));
         }
     }
 

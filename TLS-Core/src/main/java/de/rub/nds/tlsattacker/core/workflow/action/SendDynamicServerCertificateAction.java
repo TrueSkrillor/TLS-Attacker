@@ -1,25 +1,26 @@
 /**
  * TLS-Attacker - A Modular Penetration Testing Framework for TLS
  *
- * Copyright 2014-2020 Ruhr University Bochum, Paderborn University,
- * and Hackmanit GmbH
+ * Copyright 2014-2021 Ruhr University Bochum, Paderborn University, Hackmanit GmbH
  *
- * Licensed under Apache License 2.0
- * http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under Apache License, Version 2.0
+ * http://www.apache.org/licenses/LICENSE-2.0.txt
  */
+
 package de.rub.nds.tlsattacker.core.workflow.action;
 
 import de.rub.nds.modifiablevariable.ModifiableVariable;
-import de.rub.nds.tlsattacker.core.constants.AlgorithmResolver;
 import de.rub.nds.tlsattacker.core.constants.CipherSuite;
+import de.rub.nds.tlsattacker.core.constants.HandshakeMessageType;
+import de.rub.nds.tlsattacker.core.constants.ProtocolMessageType;
 import de.rub.nds.tlsattacker.core.exceptions.WorkflowExecutionException;
 import de.rub.nds.tlsattacker.core.protocol.ModifiableVariableHolder;
 import de.rub.nds.tlsattacker.core.protocol.message.CertificateMessage;
-import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
-import de.rub.nds.tlsattacker.core.protocol.message.ServerKeyExchangeMessage;
+import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.record.AbstractRecord;
 import de.rub.nds.tlsattacker.core.state.State;
 import de.rub.nds.tlsattacker.core.state.TlsContext;
+import de.rub.nds.tlsattacker.core.workflow.action.executor.ActionOption;
 import de.rub.nds.tlsattacker.core.workflow.action.executor.MessageActionResult;
 import de.rub.nds.tlsattacker.core.workflow.factory.WorkflowConfigurationFactory;
 import java.io.IOException;
@@ -28,9 +29,11 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+@XmlRootElement
 public class SendDynamicServerCertificateAction extends MessageAction implements SendingAction {
 
     private static final Logger LOGGER = LogManager.getLogger();
@@ -68,10 +71,10 @@ public class SendDynamicServerCertificateAction extends MessageAction implements
             messages = new ArrayList<>(result.getMessageList());
             records = new ArrayList<>(result.getRecordList());
             setExecuted(true);
-        } catch (IOException E) {
+        } catch (IOException e) {
             tlsContext.setReceivedTransportHandlerException(true);
-            LOGGER.debug(E);
-            setExecuted(false);
+            LOGGER.debug(e);
+            setExecuted(getActionOptions().contains(ActionOption.MAY_FAIL));
         }
     }
 
@@ -203,4 +206,26 @@ public class SendDynamicServerCertificateAction extends MessageAction implements
         return hash;
     }
 
+    @Override
+    public MessageActionDirection getMessageDirection() {
+        return MessageActionDirection.SENDING;
+    }
+
+    @Override
+    public List<ProtocolMessageType> getGoingToSendProtocolMessageTypes() {
+        return new ArrayList<ProtocolMessageType>() {
+            {
+                add(ProtocolMessageType.HANDSHAKE);
+            }
+        };
+    }
+
+    @Override
+    public List<HandshakeMessageType> getGoingToSendHandshakeMessageTypes() {
+        return new ArrayList<HandshakeMessageType>() {
+            {
+                add(HandshakeMessageType.CERTIFICATE);
+            }
+        };
+    }
 }

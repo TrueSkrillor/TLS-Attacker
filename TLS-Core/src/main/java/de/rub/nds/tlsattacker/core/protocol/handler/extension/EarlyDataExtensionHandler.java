@@ -1,14 +1,15 @@
 /**
  * TLS-Attacker - A Modular Penetration Testing Framework for TLS
  *
- * Copyright 2014-2020 Ruhr University Bochum, Paderborn University,
- * and Hackmanit GmbH
+ * Copyright 2014-2021 Ruhr University Bochum, Paderborn University, Hackmanit GmbH
  *
- * Licensed under Apache License 2.0
- * http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under Apache License, Version 2.0
+ * http://www.apache.org/licenses/LICENSE-2.0.txt
  */
+
 package de.rub.nds.tlsattacker.core.protocol.handler.extension;
 
+import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.constants.ExtensionType;
 import de.rub.nds.tlsattacker.core.protocol.message.extension.EarlyDataExtensionMessage;
 import de.rub.nds.tlsattacker.core.protocol.parser.extension.EarlyDataExtensionParser;
@@ -30,8 +31,8 @@ public class EarlyDataExtensionHandler extends ExtensionHandler<EarlyDataExtensi
     }
 
     @Override
-    public ExtensionParser getParser(byte[] message, int pointer) {
-        return new EarlyDataExtensionParser(pointer, message);
+    public ExtensionParser getParser(byte[] message, int pointer, Config config) {
+        return new EarlyDataExtensionParser(pointer, message, config);
     }
 
     @Override
@@ -50,9 +51,9 @@ public class EarlyDataExtensionHandler extends ExtensionHandler<EarlyDataExtensi
             context.setMaxEarlyDataSize(message.getMaxEarlyDataSize().getValue());
         } else if (context.getChooser().getConnectionEndType() == ConnectionEndType.SERVER) {
             context.addNegotiatedExtension(ExtensionType.EARLY_DATA); // client
-                                                                      // indicated
-                                                                      // early
-                                                                      // data
+            // indicated
+            // early
+            // data
         }
     }
 

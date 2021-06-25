@@ -1,18 +1,20 @@
 /**
  * TLS-Attacker - A Modular Penetration Testing Framework for TLS
  *
- * Copyright 2014-2020 Ruhr University Bochum, Paderborn University,
- * and Hackmanit GmbH
+ * Copyright 2014-2021 Ruhr University Bochum, Paderborn University, Hackmanit GmbH
  *
- * Licensed under Apache License 2.0
- * http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under Apache License, Version 2.0
+ * http://www.apache.org/licenses/LICENSE-2.0.txt
  */
+
 package de.rub.nds.tlsattacker.core.protocol.message.extension;
 
 import static de.rub.nds.modifiablevariable.ModifiableVariableFactory.safelySetValue;
+
 import de.rub.nds.modifiablevariable.ModifiableVariableProperty;
 import de.rub.nds.modifiablevariable.bytearray.ModifiableByteArray;
 import de.rub.nds.modifiablevariable.integer.ModifiableInteger;
+import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.constants.ExtensionType;
 
 /**
@@ -32,11 +34,9 @@ public class CertificateStatusRequestExtensionMessage extends ExtensionMessage {
     private ModifiableByteArray requestExtension;
 
     /**
-     * As a TLS 1.3 CertificateEntry extension, this extension uses the format
-     * of a CertificateStatus message. If this is the case, let's have the same
-     * fields as such a message.
+     * As a TLS 1.3 CertificateEntry extension, this extension uses the format of a CertificateStatus message. If this
+     * is the case, let's have the same fields as such a message.
      */
-
     @ModifiableVariableProperty(type = ModifiableVariableProperty.Type.LENGTH)
     private ModifiableInteger certificateStatusType;
 
@@ -50,6 +50,10 @@ public class CertificateStatusRequestExtensionMessage extends ExtensionMessage {
         super(ExtensionType.STATUS_REQUEST);
     }
 
+    public CertificateStatusRequestExtensionMessage(Config config) {
+        super(ExtensionType.STATUS_REQUEST);
+    }
+
     public ModifiableInteger getCertificateStatusRequestType() {
         return certificateStatusRequestType;
     }
@@ -59,8 +63,8 @@ public class CertificateStatusRequestExtensionMessage extends ExtensionMessage {
     }
 
     public void setCertificateStatusRequestType(int certificateStatusRequestType) {
-        this.certificateStatusRequestType = safelySetValue(this.certificateStatusRequestType,
-                certificateStatusRequestType);
+        this.certificateStatusRequestType =
+            safelySetValue(this.certificateStatusRequestType, certificateStatusRequestType);
     }
 
     public ModifiableInteger getResponderIDListLength() {

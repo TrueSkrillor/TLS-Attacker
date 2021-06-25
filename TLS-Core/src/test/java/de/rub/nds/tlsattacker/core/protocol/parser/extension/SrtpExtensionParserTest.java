@@ -1,15 +1,16 @@
 /**
  * TLS-Attacker - A Modular Penetration Testing Framework for TLS
  *
- * Copyright 2014-2020 Ruhr University Bochum, Paderborn University,
- * and Hackmanit GmbH
+ * Copyright 2014-2021 Ruhr University Bochum, Paderborn University, Hackmanit GmbH
  *
- * Licensed under Apache License 2.0
- * http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under Apache License, Version 2.0
+ * http://www.apache.org/licenses/LICENSE-2.0.txt
  */
+
 package de.rub.nds.tlsattacker.core.protocol.parser.extension;
 
 import de.rub.nds.modifiablevariable.util.ArrayConverter;
+import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.constants.ExtensionType;
 import de.rub.nds.tlsattacker.core.protocol.message.extension.SrtpExtensionMessage;
 import java.util.Arrays;
@@ -26,10 +27,10 @@ public class SrtpExtensionParserTest {
     @Parameterized.Parameters
     public static Collection<Object[]> generateData() {
         return Arrays.asList(new Object[][] {
-                { ExtensionType.USE_SRTP, ArrayConverter.hexStringToByteArray("000e0009000400010006020102"), 9, 0, 4,
-                        ArrayConverter.hexStringToByteArray("00010006"), 2, new byte[] { 0x01, 0x02 } },
-                { ExtensionType.USE_SRTP, ArrayConverter.hexStringToByteArray("000e000900040001000600"), 9, 0, 4,
-                        ArrayConverter.hexStringToByteArray("00010006"), 0, new byte[0] } });
+            { ExtensionType.USE_SRTP, ArrayConverter.hexStringToByteArray("000e0009000400010006020102"), 9, 0, 4,
+                ArrayConverter.hexStringToByteArray("00010006"), 2, new byte[] { 0x01, 0x02 } },
+            { ExtensionType.USE_SRTP, ArrayConverter.hexStringToByteArray("000e000900040001000600"), 9, 0, 4,
+                ArrayConverter.hexStringToByteArray("00010006"), 0, new byte[0] } });
     }
 
     private final ExtensionType extensionType;
@@ -43,8 +44,8 @@ public class SrtpExtensionParserTest {
     private SrtpExtensionParser parser;
 
     public SrtpExtensionParserTest(ExtensionType extensionType, byte[] expectedBytes, int extensionLength,
-            int startParsing, int srtpProtectionProfilesLength, byte[] srtpProtectionProfiles, int srtpMkiLength,
-            byte[] srtpMki) {
+        int startParsing, int srtpProtectionProfilesLength, byte[] srtpProtectionProfiles, int srtpMkiLength,
+        byte[] srtpMki) {
         this.extensionType = extensionType;
         this.expectedBytes = expectedBytes;
         this.extensionLength = extensionLength;
@@ -57,7 +58,7 @@ public class SrtpExtensionParserTest {
 
     @Before
     public void setUp() {
-        parser = new SrtpExtensionParser(startParsing, expectedBytes);
+        parser = new SrtpExtensionParser(startParsing, expectedBytes, Config.createConfig());
     }
 
     @Test

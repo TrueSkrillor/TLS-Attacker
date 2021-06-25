@@ -1,18 +1,19 @@
 /**
  * TLS-Attacker - A Modular Penetration Testing Framework for TLS
  *
- * Copyright 2014-2020 Ruhr University Bochum, Paderborn University,
- * and Hackmanit GmbH
+ * Copyright 2014-2021 Ruhr University Bochum, Paderborn University, Hackmanit GmbH
  *
- * Licensed under Apache License 2.0
- * http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under Apache License, Version 2.0
+ * http://www.apache.org/licenses/LICENSE-2.0.txt
  */
+
 package de.rub.nds.tlsattacker.core.protocol.message.extension;
 
 import de.rub.nds.modifiablevariable.ModifiableVariableFactory;
 import de.rub.nds.modifiablevariable.ModifiableVariableProperty;
 import de.rub.nds.modifiablevariable.bytearray.ModifiableByteArray;
 import de.rub.nds.modifiablevariable.integer.ModifiableInteger;
+import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.constants.ExtensionType;
 
 /**
@@ -30,6 +31,10 @@ public class TokenBindingExtensionMessage extends ExtensionMessage {
         super(ExtensionType.TOKEN_BINDING);
     }
 
+    public TokenBindingExtensionMessage(Config config) {
+        super(ExtensionType.TOKEN_BINDING);
+    }
+
     public ModifiableByteArray getTokenbindingVersion() {
         return tokenbindingVersion;
     }
@@ -39,8 +44,8 @@ public class TokenBindingExtensionMessage extends ExtensionMessage {
     }
 
     public void setTokenbindingVersion(byte[] tokenbindingVersion) {
-        this.tokenbindingVersion = ModifiableVariableFactory.safelySetValue(this.tokenbindingVersion,
-                tokenbindingVersion);
+        this.tokenbindingVersion =
+            ModifiableVariableFactory.safelySetValue(this.tokenbindingVersion, tokenbindingVersion);
     }
 
     public ModifiableByteArray getTokenbindingKeyParameters() {
@@ -52,8 +57,8 @@ public class TokenBindingExtensionMessage extends ExtensionMessage {
     }
 
     public void setTokenbindingKeyParameters(byte[] tokenbindingParameters) {
-        this.tokenbindingKeyParameters = ModifiableVariableFactory.safelySetValue(this.tokenbindingKeyParameters,
-                tokenbindingParameters);
+        this.tokenbindingKeyParameters =
+            ModifiableVariableFactory.safelySetValue(this.tokenbindingKeyParameters, tokenbindingParameters);
     }
 
     public ModifiableInteger getParameterListLength() {
@@ -65,8 +70,8 @@ public class TokenBindingExtensionMessage extends ExtensionMessage {
     }
 
     public void setParameterListLength(int parameterListLength) {
-        this.parameterListLength = ModifiableVariableFactory.safelySetValue(this.parameterListLength,
-                parameterListLength);
+        this.parameterListLength =
+            ModifiableVariableFactory.safelySetValue(this.parameterListLength, parameterListLength);
     }
 
 }

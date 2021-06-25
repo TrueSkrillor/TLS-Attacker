@@ -1,12 +1,12 @@
 /**
  * TLS-Attacker - A Modular Penetration Testing Framework for TLS
  *
- * Copyright 2014-2020 Ruhr University Bochum, Paderborn University,
- * and Hackmanit GmbH
+ * Copyright 2014-2021 Ruhr University Bochum, Paderborn University, Hackmanit GmbH
  *
- * Licensed under Apache License 2.0
- * http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under Apache License, Version 2.0
+ * http://www.apache.org/licenses/LICENSE-2.0.txt
  */
+
 package de.rub.nds.tlsattacker.core.protocol.preparator;
 
 import de.rub.nds.tlsattacker.core.protocol.message.DtlsHandshakeMessageFragment;
@@ -28,9 +28,10 @@ public class DtlsHandshakeMessageFragmentPreparator extends HandshakeMessagePrep
     @Override
     protected void prepareHandshakeMessageContents() {
         msg.setContent(msg.getFragmentContentConfig());
+        msg.setLength(msg.getHandshakeMessageLengthConfig());
         msg.setMessageSeq(msg.getMessageSequenceConfig());
         msg.setFragmentOffset(msg.getOffsetConfig());
-        msg.setFragmentLength(msg.getHandshakeMessageLengthConfig());
+        msg.setFragmentLength(msg.getContent().getValue().length);
         msg.setEpoch(chooser.getContext().getDtlsWriteEpoch());
     }
 

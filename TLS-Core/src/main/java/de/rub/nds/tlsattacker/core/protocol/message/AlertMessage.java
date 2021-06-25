@@ -1,33 +1,36 @@
 /**
  * TLS-Attacker - A Modular Penetration Testing Framework for TLS
  *
- * Copyright 2014-2020 Ruhr University Bochum, Paderborn University,
- * and Hackmanit GmbH
+ * Copyright 2014-2021 Ruhr University Bochum, Paderborn University, Hackmanit GmbH
  *
- * Licensed under Apache License 2.0
- * http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under Apache License, Version 2.0
+ * http://www.apache.org/licenses/LICENSE-2.0.txt
  */
+
 package de.rub.nds.tlsattacker.core.protocol.message;
 
 import de.rub.nds.modifiablevariable.ModifiableVariableFactory;
 import de.rub.nds.modifiablevariable.ModifiableVariableProperty;
 import de.rub.nds.modifiablevariable.singlebyte.ModifiableByte;
+import de.rub.nds.modifiablevariable.util.UnformattedByteArrayAdapter;
 import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.constants.AlertDescription;
 import de.rub.nds.tlsattacker.core.constants.AlertLevel;
 import de.rub.nds.tlsattacker.core.constants.ProtocolMessageType;
 import de.rub.nds.tlsattacker.core.protocol.handler.AlertHandler;
-import de.rub.nds.tlsattacker.core.protocol.handler.ProtocolMessageHandler;
+import de.rub.nds.tlsattacker.core.protocol.handler.TlsMessageHandler;
 import de.rub.nds.tlsattacker.core.state.TlsContext;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @XmlRootElement
-public class AlertMessage extends ProtocolMessage {
+public class AlertMessage extends TlsMessage {
 
     /**
      * config array used to configure alert message
      */
+    @XmlJavaTypeAdapter(UnformattedByteArrayAdapter.class)
     private byte[] config;
     /**
      * alert level
@@ -150,7 +153,7 @@ public class AlertMessage extends ProtocolMessage {
         }
         AlertMessage alert = (AlertMessage) obj;
         return (Objects.equals(alert.getLevel().getValue(), this.getLevel().getValue()))
-                && (Objects.equals(alert.getDescription().getValue(), this.getDescription().getValue()));
+            && (Objects.equals(alert.getDescription().getValue(), this.getDescription().getValue()));
 
     }
 
@@ -163,7 +166,7 @@ public class AlertMessage extends ProtocolMessage {
     }
 
     @Override
-    public ProtocolMessageHandler getHandler(TlsContext context) {
+    public TlsMessageHandler getHandler(TlsContext context) {
         return new AlertHandler(context);
     }
 }

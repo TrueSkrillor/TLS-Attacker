@@ -1,12 +1,12 @@
 /**
  * TLS-Attacker - A Modular Penetration Testing Framework for TLS
  *
- * Copyright 2014-2020 Ruhr University Bochum, Paderborn University,
- * and Hackmanit GmbH
+ * Copyright 2014-2021 Ruhr University Bochum, Paderborn University, Hackmanit GmbH
  *
- * Licensed under Apache License 2.0
- * http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under Apache License, Version 2.0
+ * http://www.apache.org/licenses/LICENSE-2.0.txt
  */
+
 package de.rub.nds.tlsattacker.core.protocol.preparator.extension;
 
 import de.rub.nds.tlsattacker.core.config.Config;
@@ -38,52 +38,44 @@ public class ServerNameIndicationExtensionPreparatorTest {
     }
 
     /**
-     * Test of prepareExtensionContent method, of class
-     * ServerNameIndicationExtensionPreparator.
+     * Test of prepareExtensionContent method, of class ServerNameIndicationExtensionPreparator.
      */
     @Test
     public void testPrepareExtensionContentWithOnePair() {
         List<ServerNamePair> pairList = new LinkedList<>();
-        ServerNamePair pair = new ServerNamePair();
-        pair.setServerNameConfig(new byte[] { 0x01, 0x02 });
-        pair.setServerNameTypeConfig((byte) 1);
+        ServerNamePair pair = new ServerNamePair((byte) 1, new byte[] { 0x01, 0x02 });
         pair.setServerNameLength(2);
         pairList.add(pair);
         message.setServerNameList(pairList);
 
-        ServerNameIndicationExtensionPreparator serverprep = new ServerNameIndicationExtensionPreparator(chooser,
-                message, serializer);
+        ServerNameIndicationExtensionPreparator serverPrep =
+            new ServerNameIndicationExtensionPreparator(chooser, message, serializer);
 
-        serverprep.prepareExtensionContent();
+        serverPrep.prepareExtensionContent();
 
-        assertArrayEquals(new byte[] { 0x01, 0x00, 0x02, 0x01, 0x02 }, serverprep.getObject().getServerNameListBytes()
-                .getValue());
-        assertEquals(5, (long) serverprep.getObject().getServerNameListLength().getOriginalValue());
+        assertArrayEquals(new byte[] { 0x01, 0x00, 0x02, 0x01, 0x02 },
+            serverPrep.getObject().getServerNameListBytes().getValue());
+        assertEquals(5, (long) serverPrep.getObject().getServerNameListLength().getOriginalValue());
     }
 
     @Test
     public void testPrepareExtensionContentWithTwoPairs() {
         List<ServerNamePair> pairList = new LinkedList<>();
-        ServerNamePair pair = new ServerNamePair();
-        pair.setServerNameConfig(new byte[] { 0x01, 0x02 });
-        pair.setServerNameTypeConfig((byte) 1);
+        ServerNamePair pair = new ServerNamePair((byte) 1, new byte[] { 0x01, 0x02 });
         pair.setServerNameLength(2);
         pairList.add(pair);
-        ServerNamePair pair2 = new ServerNamePair();
-        pair2.setServerNameConfig(new byte[] { 0x03, 0x04, 0x05, 0x06 });
-        pair2.setServerNameTypeConfig((byte) 2);
+        ServerNamePair pair2 = new ServerNamePair((byte) 2, new byte[] { 0x03, 0x04, 0x05, 0x06 });
         pair2.setServerNameLength(4);
         pairList.add(pair2);
         message.setServerNameList(pairList);
 
-        ServerNameIndicationExtensionPreparator serverprep = new ServerNameIndicationExtensionPreparator(chooser,
-                message, serializer);
+        ServerNameIndicationExtensionPreparator serverPrep =
+            new ServerNameIndicationExtensionPreparator(chooser, message, serializer);
 
-        serverprep.prepareExtensionContent();
+        serverPrep.prepareExtensionContent();
 
         assertArrayEquals(new byte[] { 0x01, 0x00, 0x02, 0x01, 0x02, 0x02, 0x00, 0x04, 0x03, 0x04, 0x05, 0x06 },
-                serverprep.getObject().getServerNameListBytes().getValue());
-        assertEquals(12, (long) serverprep.getObject().getServerNameListLength().getOriginalValue());
+            serverPrep.getObject().getServerNameListBytes().getValue());
+        assertEquals(12, (long) serverPrep.getObject().getServerNameListLength().getOriginalValue());
     }
-
 }

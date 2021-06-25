@@ -1,15 +1,16 @@
 /**
  * TLS-Attacker - A Modular Penetration Testing Framework for TLS
  *
- * Copyright 2014-2020 Ruhr University Bochum, Paderborn University,
- * and Hackmanit GmbH
+ * Copyright 2014-2021 Ruhr University Bochum, Paderborn University, Hackmanit GmbH
  *
- * Licensed under Apache License 2.0
- * http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under Apache License, Version 2.0
+ * http://www.apache.org/licenses/LICENSE-2.0.txt
  */
+
 package de.rub.nds.tlsattacker.core.protocol.handler.extension;
 
 import de.rub.nds.modifiablevariable.util.ArrayConverter;
+import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.constants.NamedGroup;
 import de.rub.nds.tlsattacker.core.exceptions.AdjustmentException;
 import de.rub.nds.tlsattacker.core.protocol.message.extension.EllipticCurvesExtensionMessage;
@@ -44,14 +45,14 @@ public class EllipticCurvesExtensionHandler extends ExtensionHandler<EllipticCur
     public void adjustTLSExtensionContext(EllipticCurvesExtensionMessage message) {
         byte[] groupBytes = message.getSupportedGroups().getValue();
         if (groupBytes.length % NamedGroup.LENGTH != 0) {
-            throw new AdjustmentException("Could not create resonable NamedGroups from groupBytes");
+            throw new AdjustmentException("Could not create reasonable NamedGroups from groupBytes");
         }
         List<NamedGroup> groupList = new LinkedList<>();
         for (int i = 0; i < groupBytes.length; i += NamedGroup.LENGTH) {
             byte[] group = Arrays.copyOfRange(groupBytes, i, i + NamedGroup.LENGTH);
             NamedGroup namedGroup = NamedGroup.getNamedGroup(group);
             if (namedGroup == null) {
-                LOGGER.warn("Unknown EllipticCruve:" + ArrayConverter.bytesToHexString(group));
+                LOGGER.warn("Unknown EllipticCurve:" + ArrayConverter.bytesToHexString(group));
             } else {
                 groupList.add(namedGroup);
             }
@@ -64,8 +65,8 @@ public class EllipticCurvesExtensionHandler extends ExtensionHandler<EllipticCur
     }
 
     @Override
-    public EllipticCurvesExtensionParser getParser(byte[] message, int pointer) {
-        return new EllipticCurvesExtensionParser(pointer, message);
+    public EllipticCurvesExtensionParser getParser(byte[] message, int pointer, Config config) {
+        return new EllipticCurvesExtensionParser(pointer, message, config);
     }
 
     @Override

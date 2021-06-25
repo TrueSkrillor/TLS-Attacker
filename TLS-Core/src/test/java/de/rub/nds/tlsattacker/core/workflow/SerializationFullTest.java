@@ -1,18 +1,19 @@
 /**
  * TLS-Attacker - A Modular Penetration Testing Framework for TLS
  *
- * Copyright 2014-2020 Ruhr University Bochum, Paderborn University,
- * and Hackmanit GmbH
+ * Copyright 2014-2021 Ruhr University Bochum, Paderborn University, Hackmanit GmbH
  *
- * Licensed under Apache License 2.0
- * http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under Apache License, Version 2.0
+ * http://www.apache.org/licenses/LICENSE-2.0.txt
  */
+
 package de.rub.nds.tlsattacker.core.workflow;
 
 import de.rub.nds.modifiablevariable.string.StringExplicitValueModification;
 import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.constants.CipherSuite;
 import de.rub.nds.tlsattacker.core.constants.CompressionMethod;
+import de.rub.nds.tlsattacker.core.constants.ProtocolMessageType;
 import de.rub.nds.tlsattacker.core.constants.ProtocolVersion;
 import de.rub.nds.tlsattacker.core.constants.RunningModeType;
 import de.rub.nds.tlsattacker.core.https.HttpsRequestMessage;
@@ -31,7 +32,7 @@ import de.rub.nds.tlsattacker.core.protocol.message.FinishedMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.HeartbeatMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.HelloRequestMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.HelloVerifyRequestMessage;
-import de.rub.nds.tlsattacker.core.protocol.message.ProtocolMessage;
+import de.rub.nds.tlsattacker.core.protocol.ProtocolMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.RSAClientKeyExchangeMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.SSL2ClientHelloMessage;
 import de.rub.nds.tlsattacker.core.protocol.message.SSL2ServerHelloMessage;
@@ -134,7 +135,7 @@ public class SerializationFullTest {
         messages.add(new SSL2ServerHelloMessage());
         messages.add(new ServerHelloDoneMessage());
         messages.add(new UnknownHandshakeMessage());
-        messages.add(new UnknownMessage());
+        messages.add(new UnknownMessage(config, ProtocolMessageType.UNKNOWN));
         messages.add(new ServerHelloMessage());
         HttpsRequestMessage message = new HttpsRequestMessage();
         message.setRequestPath("someString");
@@ -157,7 +158,7 @@ public class SerializationFullTest {
         }
         LOGGER.info(builder.toString());
         try {
-            trace = WorkflowTraceSerializer.read(new FileInputStream(f));
+            trace = WorkflowTraceSerializer.secureRead(new FileInputStream(f));
         } catch (XMLStreamException ex) {
             fail();
         }

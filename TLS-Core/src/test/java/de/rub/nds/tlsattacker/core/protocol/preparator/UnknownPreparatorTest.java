@@ -1,14 +1,15 @@
 /**
  * TLS-Attacker - A Modular Penetration Testing Framework for TLS
  *
- * Copyright 2014-2020 Ruhr University Bochum, Paderborn University,
- * and Hackmanit GmbH
+ * Copyright 2014-2021 Ruhr University Bochum, Paderborn University, Hackmanit GmbH
  *
- * Licensed under Apache License 2.0
- * http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under Apache License, Version 2.0
+ * http://www.apache.org/licenses/LICENSE-2.0.txt
  */
+
 package de.rub.nds.tlsattacker.core.protocol.preparator;
 
+import de.rub.nds.tlsattacker.core.constants.ProtocolMessageType;
 import de.rub.nds.tlsattacker.core.protocol.message.UnknownMessage;
 import de.rub.nds.tlsattacker.core.state.TlsContext;
 import static org.junit.Assert.assertArrayEquals;
@@ -19,18 +20,17 @@ public class UnknownPreparatorTest {
 
     private TlsContext context;
     private UnknownMessage message;
-    private UnknownPreparator preparator;
+    private UnknownMessagePreparator preparator;
 
     @Before
     public void setUp() {
         this.context = new TlsContext();
-        this.message = new UnknownMessage();
-        this.preparator = new UnknownPreparator(context.getChooser(), message);
+        this.message = new UnknownMessage(context.getConfig(), ProtocolMessageType.UNKNOWN);
+        this.preparator = new UnknownMessagePreparator(context.getChooser(), message);
     }
 
     /**
-     * Test of prepareProtocolMessageContents method, of class
-     * UnknownPreparator.
+     * Test of prepareProtocolMessageContents method, of class UnknownPreparator.
      */
     @Test
     public void testPrepare() {

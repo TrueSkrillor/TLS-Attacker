@@ -1,14 +1,15 @@
 /**
  * TLS-Attacker - A Modular Penetration Testing Framework for TLS
  *
- * Copyright 2014-2020 Ruhr University Bochum, Paderborn University,
- * and Hackmanit GmbH
+ * Copyright 2014-2021 Ruhr University Bochum, Paderborn University, Hackmanit GmbH
  *
- * Licensed under Apache License 2.0
- * http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under Apache License, Version 2.0
+ * http://www.apache.org/licenses/LICENSE-2.0.txt
  */
+
 package de.rub.nds.tlsattacker.core.protocol.parser;
 
+import de.rub.nds.tlsattacker.core.constants.ProtocolMessageType;
 import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.constants.ProtocolVersion;
 import de.rub.nds.tlsattacker.core.protocol.message.UnknownMessage;
@@ -20,7 +21,7 @@ import org.junit.experimental.categories.Category;
 
 public class UnknownParserStressTest {
 
-    private UnknownParser parser;
+    private UnknownMessageParser parser;
     private final Config config = Config.createConfig();
 
     /**
@@ -34,7 +35,7 @@ public class UnknownParserStressTest {
             byte[] array = new byte[r.nextInt(100)];
             if (array.length != 0) {
                 r.nextBytes(array);
-                parser = new UnknownParser(0, array, ProtocolVersion.TLS12, config);
+                parser = new UnknownMessageParser(0, array, ProtocolVersion.TLS12, ProtocolMessageType.UNKNOWN, config);
                 UnknownMessage message = parser.parse();
                 assertArrayEquals(array, message.getCompleteResultingMessage().getValue());
             }

@@ -1,23 +1,23 @@
 /**
  * TLS-Attacker - A Modular Penetration Testing Framework for TLS
  *
- * Copyright 2014-2020 Ruhr University Bochum, Paderborn University,
- * and Hackmanit GmbH
+ * Copyright 2014-2021 Ruhr University Bochum, Paderborn University, Hackmanit GmbH
  *
- * Licensed under Apache License 2.0
- * http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under Apache License, Version 2.0
+ * http://www.apache.org/licenses/LICENSE-2.0.txt
  */
+
 package de.rub.nds.tlsattacker.transport.udp.stream;
 
+import de.rub.nds.tlsattacker.transport.udp.ServerUdpTransportHandler;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.SocketTimeoutException;
 
 public class UdpInputStream extends InputStream {
 
-    private final static int BUFFER_SIZE = 16384;
+    private static final int BUFFER_SIZE = 16384;
 
     private DatagramSocket socket = null;
 
@@ -37,9 +37,8 @@ public class UdpInputStream extends InputStream {
     private int index = 0;
 
     /**
-     * If set to true, on datagram receipt it connects the socket to the
-     * datagram's source address. This is useful if the source address is not
-     * pre-set, such as in {@link} ServerUdpTransportHandler}'s case.
+     * If set to true, on datagram receipt it connects the socket to the datagram's source address. This is useful if
+     * the source address is not pre-set, such as in {@link ServerUdpTransportHandler}'s case.
      */
     private boolean connectOnReceive;
 
@@ -56,10 +55,10 @@ public class UdpInputStream extends InputStream {
     }
 
     /**
-     * Blocks until data is received from a UDP peer. Will never return -1, as
-     * UDP has no mechanism of notifying that all data has been sent. To avoid
-     * blocking indefinitely, should be called only once data is available.
+     * Blocks until data is received from a UDP peer. Will never return -1, as UDP has no mechanism of notifying that
+     * all data has been sent. To avoid blocking indefinitely, should be called only once data is available.
      */
+    @SuppressWarnings("CheckStyle")
     @Override
     public int read() throws IOException {
         // we wait until data is available
@@ -86,16 +85,12 @@ public class UdpInputStream extends InputStream {
      */
     private DatagramPacket receive() throws IOException {
         DatagramPacket packet = new DatagramPacket(dataBuffer, BUFFER_SIZE);
-        try {
-            socket.receive(packet);
-            index = 0;
-            packetSize = packet.getLength();
+        socket.receive(packet);
+        index = 0;
+        packetSize = packet.getLength();
 
-            if (connectOnReceive && !socket.isConnected()) {
-                socket.connect(packet.getSocketAddress());
-            }
-        } catch (SocketTimeoutException E) {
-            packet = null;
+        if (connectOnReceive && !socket.isConnected()) {
+            socket.connect(packet.getSocketAddress());
         }
 
         return packet;

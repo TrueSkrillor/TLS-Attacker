@@ -1,12 +1,12 @@
 /**
  * TLS-Attacker - A Modular Penetration Testing Framework for TLS
  *
- * Copyright 2014-2020 Ruhr University Bochum, Paderborn University,
- * and Hackmanit GmbH
+ * Copyright 2014-2021 Ruhr University Bochum, Paderborn University, Hackmanit GmbH
  *
- * Licensed under Apache License 2.0
- * http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under Apache License, Version 2.0
+ * http://www.apache.org/licenses/LICENSE-2.0.txt
  */
+
 package de.rub.nds.tlsattacker.core.workflow.chooser;
 
 import de.rub.nds.modifiablevariable.util.ArrayConverter;
@@ -39,6 +39,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
+@SuppressWarnings("SpellCheckingInspection")
 public class DefaultChooserTest {
 
     private Chooser chooser;
@@ -84,7 +85,8 @@ public class DefaultChooserTest {
     @Test
     public void testGetSelectedSigHashAlgorithm() {
         config.setDefaultSelectedSignatureAndHashAlgorithm(SignatureAndHashAlgorithm.RSA_PSS_PSS_SHA256);
-        assertEquals(config.getDefaultSelectedSignatureAndHashAlgorithm(), SignatureAndHashAlgorithm.RSA_PSS_PSS_SHA256);
+        assertEquals(config.getDefaultSelectedSignatureAndHashAlgorithm(),
+            SignatureAndHashAlgorithm.RSA_PSS_PSS_SHA256);
         assertEquals(chooser.getSelectedSigHashAlgorithm(), SignatureAndHashAlgorithm.RSA_PSS_PSS_SHA256);
         context.setSelectedSignatureAndHashAlgorithm(SignatureAndHashAlgorithm.DSA_SHA1);
         assertEquals(chooser.getSelectedSigHashAlgorithm(), SignatureAndHashAlgorithm.DSA_SHA1);
@@ -129,8 +131,7 @@ public class DefaultChooserTest {
     }
 
     /**
-     * Test of getClientSupportedSignatureAndHashAlgorithms method, of class
-     * DefaultChooser.
+     * Test of getClientSupportedSignatureAndHashAlgorithms method, of class DefaultChooser.
      */
     @Test
     public void testGetClientSupportedSignatureAndHashAlgorithms() {
@@ -254,16 +255,15 @@ public class DefaultChooserTest {
         clientSupportedCiphersuites.add(CipherSuite.SSL_FORTEZZA_KEA_WITH_NULL_SHA);
         clientSupportedCiphersuites.add(CipherSuite.TLS_DHE_PSK_WITH_AES_128_CBC_SHA256);
         clientSupportedCiphersuites.add(CipherSuite.TLS_DHE_DSS_WITH_ARIA_256_GCM_SHA384);
-        config.setDefaultClientSupportedCiphersuites(clientSupportedCiphersuites);
-        assertEquals(clientSupportedCiphersuites, config.getDefaultClientSupportedCiphersuites());
-        assertEquals(clientSupportedCiphersuites, chooser.getClientSupportedCiphersuites());
-        context.setClientSupportedCiphersuites(clientSupportedCiphersuites2);
-        assertEquals(clientSupportedCiphersuites2, chooser.getClientSupportedCiphersuites());
+        config.setDefaultClientSupportedCipherSuites(clientSupportedCiphersuites);
+        assertEquals(clientSupportedCiphersuites, config.getDefaultClientSupportedCipherSuites());
+        assertEquals(clientSupportedCiphersuites, chooser.getClientSupportedCipherSuites());
+        context.setClientSupportedCipherSuites(clientSupportedCiphersuites2);
+        assertEquals(clientSupportedCiphersuites2, chooser.getClientSupportedCipherSuites());
     }
 
     /**
-     * Test of getServerSupportedSignatureAndHashAlgorithms method, of class
-     * DefaultChooser.
+     * Test of getServerSupportedSignatureAndHashAlgorithms method, of class DefaultChooser.
      */
     @Test
     public void testGetServerSupportedSignatureAndHashAlgorithms() {
@@ -275,10 +275,11 @@ public class DefaultChooserTest {
         serverSupportedSignatureAndHashAlgorithms.add(SignatureAndHashAlgorithm.DSA_SHA384);
         config.setDefaultServerSupportedSignatureAndHashAlgorithms(serverSupportedSignatureAndHashAlgorithms);
         assertEquals(serverSupportedSignatureAndHashAlgorithms,
-                config.getDefaultServerSupportedSignatureAndHashAlgorithms());
+            config.getDefaultServerSupportedSignatureAndHashAlgorithms());
         assertEquals(serverSupportedSignatureAndHashAlgorithms, chooser.getServerSupportedSignatureAndHashAlgorithms());
         context.setServerSupportedSignatureAndHashAlgorithms(serverSupportedSignatureAndHashAlgorithms2);
-        assertEquals(serverSupportedSignatureAndHashAlgorithms2, chooser.getServerSupportedSignatureAndHashAlgorithms());
+        assertEquals(serverSupportedSignatureAndHashAlgorithms2,
+            chooser.getServerSupportedSignatureAndHashAlgorithms());
     }
 
     /**
@@ -468,7 +469,7 @@ public class DefaultChooserTest {
      */
     @Test
     public void testGetTransportHandler() {
-        TransportHandler transportHandler = new ClientTcpTransportHandler(0, "abc", 0);
+        TransportHandler transportHandler = new ClientTcpTransportHandler(0, 0, "abc", 0);
         context.setTransportHandler(transportHandler);
         assertEquals(transportHandler, chooser.getTransportHandler());
     }
@@ -580,9 +581,9 @@ public class DefaultChooserTest {
         context.setServerDhPrivateKey(null);
         config.setDefaultServerDhPrivateKey(BigInteger.ONE);
         assertEquals(BigInteger.ONE, config.getDefaultServerDhPrivateKey());
-        assertEquals(BigInteger.ONE, chooser.getDhServerPrivateKey());
+        assertEquals(BigInteger.ONE, chooser.getServerDhPrivateKey());
         context.setServerDhPrivateKey(BigInteger.TEN);
-        assertEquals(BigInteger.TEN, chooser.getDhServerPrivateKey());
+        assertEquals(BigInteger.TEN, chooser.getServerDhPrivateKey());
     }
 
     /**
@@ -593,9 +594,9 @@ public class DefaultChooserTest {
         context.setClientDhPrivateKey(null);
         config.setDefaultClientDhPrivateKey(BigInteger.ONE);
         assertEquals(BigInteger.ONE, config.getDefaultClientDhPrivateKey());
-        assertEquals(BigInteger.ONE, chooser.getDhClientPrivateKey());
+        assertEquals(BigInteger.ONE, chooser.getClientDhPrivateKey());
         context.setClientDhPrivateKey(BigInteger.TEN);
-        assertEquals(BigInteger.TEN, chooser.getDhClientPrivateKey());
+        assertEquals(BigInteger.TEN, chooser.getClientDhPrivateKey());
     }
 
     /**
@@ -606,9 +607,9 @@ public class DefaultChooserTest {
         context.setServerDhPublicKey(null);
         config.setDefaultServerDhPublicKey(BigInteger.ONE);
         assertEquals(BigInteger.ONE, config.getDefaultServerDhPublicKey());
-        assertEquals(BigInteger.ONE, chooser.getDhServerPublicKey());
+        assertEquals(BigInteger.ONE, chooser.getServerDhPublicKey());
         context.setServerDhPublicKey(BigInteger.TEN);
-        assertEquals(BigInteger.TEN, chooser.getDhServerPublicKey());
+        assertEquals(BigInteger.TEN, chooser.getServerDhPublicKey());
     }
 
     /**
@@ -619,9 +620,9 @@ public class DefaultChooserTest {
         context.setClientDhPublicKey(null);
         config.setDefaultClientDhPublicKey(BigInteger.ONE);
         assertEquals(BigInteger.ONE, config.getDefaultClientDhPublicKey());
-        assertEquals(BigInteger.ONE, chooser.getDhClientPublicKey());
+        assertEquals(BigInteger.ONE, chooser.getClientDhPublicKey());
         context.setClientDhPublicKey(BigInteger.TEN);
-        assertEquals(BigInteger.TEN, chooser.getDhClientPublicKey());
+        assertEquals(BigInteger.TEN, chooser.getClientDhPublicKey());
     }
 
     /**
@@ -671,12 +672,12 @@ public class DefaultChooserTest {
         context.setClientEcPublicKey(null);
         config.setDefaultClientEcPublicKey(Point.createPoint(BigInteger.ONE, BigInteger.TEN, NamedGroup.SECP256R1));
         assertEquals(Point.createPoint(BigInteger.ONE, BigInteger.TEN, NamedGroup.SECP256R1),
-                config.getDefaultClientEcPublicKey());
+            config.getDefaultClientEcPublicKey());
         assertEquals(Point.createPoint(BigInteger.ONE, BigInteger.TEN, NamedGroup.SECP256R1),
-                chooser.getClientEcPublicKey());
+            chooser.getClientEcPublicKey());
         context.setClientEcPublicKey(Point.createPoint(BigInteger.ZERO, BigInteger.TEN, NamedGroup.SECP256R1));
         assertEquals(Point.createPoint(BigInteger.ZERO, BigInteger.TEN, NamedGroup.SECP256R1),
-                chooser.getClientEcPublicKey());
+            chooser.getClientEcPublicKey());
     }
 
     /**
@@ -687,12 +688,12 @@ public class DefaultChooserTest {
         context.setServerEcPublicKey(null);
         config.setDefaultServerEcPublicKey(Point.createPoint(BigInteger.ONE, BigInteger.TEN, NamedGroup.SECP256R1));
         assertEquals(Point.createPoint(BigInteger.ONE, BigInteger.TEN, NamedGroup.SECP256R1),
-                config.getDefaultServerEcPublicKey());
+            config.getDefaultServerEcPublicKey());
         assertEquals(Point.createPoint(BigInteger.ONE, BigInteger.TEN, NamedGroup.SECP256R1),
-                chooser.getServerEcPublicKey());
+            chooser.getServerEcPublicKey());
         context.setServerEcPublicKey(Point.createPoint(BigInteger.ZERO, BigInteger.TEN, NamedGroup.SECP256R1));
         assertEquals(Point.createPoint(BigInteger.ZERO, BigInteger.TEN, NamedGroup.SECP256R1),
-                chooser.getServerEcPublicKey());
+            chooser.getServerEcPublicKey());
     }
 
     /**
@@ -809,10 +810,10 @@ public class DefaultChooserTest {
         byte[] salt2 = ArrayConverter.hexStringToByteArray("FF");
         context.setServerPWDSalt(null);
         config.setDefaultServerPWDSalt(salt);
-        assertEquals(salt, config.getDefaultServerPWDSalt());
-        assertEquals(null, chooser.getServerPWDSalt());
+        assertArrayEquals(salt, config.getDefaultServerPWDSalt());
+        assertArrayEquals(salt, chooser.getServerPWDSalt());
         context.setServerPWDSalt(salt2);
-        assertEquals(salt2, chooser.getServerPWDSalt());
+        assertArrayEquals(salt2, chooser.getServerPWDSalt());
     }
 
     /**

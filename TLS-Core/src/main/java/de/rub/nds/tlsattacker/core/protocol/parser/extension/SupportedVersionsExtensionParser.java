@@ -1,15 +1,16 @@
 /**
  * TLS-Attacker - A Modular Penetration Testing Framework for TLS
  *
- * Copyright 2014-2020 Ruhr University Bochum, Paderborn University,
- * and Hackmanit GmbH
+ * Copyright 2014-2021 Ruhr University Bochum, Paderborn University, Hackmanit GmbH
  *
- * Licensed under Apache License 2.0
- * http://www.apache.org/licenses/LICENSE-2.0
+ * Licensed under Apache License, Version 2.0
+ * http://www.apache.org/licenses/LICENSE-2.0.txt
  */
+
 package de.rub.nds.tlsattacker.core.protocol.parser.extension;
 
 import de.rub.nds.modifiablevariable.util.ArrayConverter;
+import de.rub.nds.tlsattacker.core.config.Config;
 import de.rub.nds.tlsattacker.core.constants.ExtensionByteLength;
 import de.rub.nds.tlsattacker.core.constants.HandshakeByteLength;
 import de.rub.nds.tlsattacker.core.protocol.message.extension.SupportedVersionsExtensionMessage;
@@ -20,8 +21,8 @@ public class SupportedVersionsExtensionParser extends ExtensionParser<SupportedV
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public SupportedVersionsExtensionParser(int startposition, byte[] array) {
-        super(startposition, array);
+    public SupportedVersionsExtensionParser(int startposition, byte[] array, Config config) {
+        super(startposition, array, config);
     }
 
     @Override
@@ -31,7 +32,7 @@ public class SupportedVersionsExtensionParser extends ExtensionParser<SupportedV
             // This looks like a ServerProtocolVersionExtension
             msg.setSupportedVersions(parseByteArrayField(HandshakeByteLength.VERSION));
         } else {
-            // This looks like a ClientProtocoLVersionExtension
+            // This looks like a ClientProtocolVersionExtension
             parseSupportedVersionLength(msg);
             parseSupportedVersion(msg);
         }
@@ -43,8 +44,7 @@ public class SupportedVersionsExtensionParser extends ExtensionParser<SupportedV
     }
 
     /**
-     * Reads the next bytes as the supportedVersionLength of the Extension and
-     * writes them in the message
+     * Reads the next bytes as the supportedVersionLength of the Extension and writes them in the message
      *
      * @param msg
      *            Message to write in
@@ -55,8 +55,7 @@ public class SupportedVersionsExtensionParser extends ExtensionParser<SupportedV
     }
 
     /**
-     * Reads the next bytes as the supportedVersion of the Extension and writes
-     * them in the message
+     * Reads the next bytes as the supportedVersion of the Extension and writes them in the message
      *
      * @param msg
      *            Message to write in
